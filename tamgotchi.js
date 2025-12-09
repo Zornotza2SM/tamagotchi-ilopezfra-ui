@@ -1,75 +1,106 @@
+
+
 // --- MODELO ---
 let hambre = 0;
 let felicidad = 10;
+let estaMuerto = false;
 
-// --- VISTA ---
+
+//---VISTA---
 function vista() {
-    // 1. Generamos el HTML
+
+    // OPCIONAL: Mensaje de fin de juego
+    let mensaje = estaMuerto ? "<div class='game-over'>GAME OVER</div>" : "";
+
     document.getElementById("app").innerHTML = `
         <div class="pet-screen">
             <h1>PIXEL PET</h1>
             
             <div class="pet-face">
-                👾 
+                ${estaMuerto ? "💀" : "👾"} 
             </div>
 
             <div class="stats">
-                <div>🍗 Hambre: ${________}</div>
-                <div>❤️ Felicidad: ${________}</div>
+                <div>🍗 Hambre:${vistaIconos("🍗", hambre)}</div>
+                <div>❤️ Felicidad:${vistaIconos("❤️", felicidad)} </div>
             </div>
 
-            <div class="controls">
+            ${estaMuerto ? "<div class='game-over'>GAME OVER</div>" : ` <div class="controls">
                 <button class="boton" id="btn-comer">Dar Comida</button>
                 <button class="boton" id="btn-jugar">Jugar</button>
-            </div>
+            </div>` }
+            
+           
         </div>
-    `;
+    `
 
-    // AQUI IRÁN LOS EVENTOS (FASE 3)
+    document.getElementById("btn-comer").onclick = () => {
+        if (hambre > 0)
+            hambre--
+          document.getElementById("btn-comer").onclick = () => {
+        if (hambre > 0) {
+            hambre--;
+            
+            // 1. Bloqueamos el botón
+            comiendo = true;
+            vista(); // Pintamos el botón gris ("Masticando...")
+
+            // 2. Iniciamos el temporizador de 1 segundo (1000ms)
+            setTimeout(() => {
+                comiendo = false; // Desbloqueamos
+                vista(); // Pintamos el botón amarillo otra vez
+            }, 1000);
+        }
+    }
+
+        vista()
+
+    }
+    
+
 }
 
-// Llamamos a la vista por primera vez para que aparezca algo
-vista();
-   // --- ACTUALIZACIÓN (Eventos) ---
-    
-    document.getElementById("btn-comer").onclick = () => {
-        // Lógica: Si el hambre es mayor que 0, restamos 1.
-        if (hambre > 0) {
-            hambre--; 
-        }
-        vista(); // IMPORTANTE: Volvemos a pintar
+function vistaIconos(icono, zenbat) {
+    let iconos = []
+    for (i = 0; i < zenbat; i++) {
+        iconos.push(icono)
     }
+    return iconos.join("")
+}
 
-    document.getElementById("btn-jugar").onclick = () => {
-        // Lógica: Si felicidad es menor que 10, sumamos 1.
-        if (felicidad < 10) {
-            ________++; // Completa esto
-        }
-        vista(); // Recargamos la vista
-    }
-    // --- LOOP DEL TIEMPO ---
+vista()
+
+
+
 
 function pasoDelTiempo() {
-    // Cada 2 segundos (2000ms), la mascota empeora
+    // 2 segundoro (2000ms), maskotak okerrera egiten du
     setTimeout(() => {
-        
-        // 1. Empeoramos las estadísticas
-        hambre++;      // Le entra hambre
-        felicidad--;   // Se pone triste
 
-        // 2. Limitamos los valores (para que no sean infinitos)
+        // 1. Estatistikak okertzen ditugu
+        hambre++;      // Gosea sartzen zaio
+        felicidad--;   // Tristetu egiten da
+
+        // 2. Balioak mugatzen ditugu (infinituak izan ez daitezen)
         if (hambre > 10) hambre = 10;
         if (felicidad < 0) felicidad = 0;
 
-        // 3. Actualizamos la pantalla
-        vista();
 
-        // 4. Volvemos a llamar al temporizador (Bucle infinito)
-        pasoDelTiempo();
+
+        // Primero calculamos si está vivo o muerto
+        estaMuerto = (hambre >= 10 || felicidad <= 0);
+
+        // 3. Pantaila eguneratzen dugu
+        vista();
+        
+
+        // 4. Tenporizadoreari berriro deitzen diogu (Begizta infinitua)
+        if (!estaMuerto)
+            pasoDelTiempo();
 
     }, 2000);
 }
 
-// INICIAR EL TIEMPO
+// DENBORA HASI
 pasoDelTiempo();
 
